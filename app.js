@@ -3,6 +3,30 @@ console.log('=== CRUD DE PRODUCTOS (validaciones, filtros y b�squedas) ===');
 let productos = [];
 let idCounter = 1;
 
+// ==================== PERSISTENCIA ====================
+
+// Guardar en localStorage
+function guardarEnLocalStorage() {
+    localStorage.setItem("productos", JSON.stringify(productos));
+    console.log("Datos guardados en localStorage.");
+}
+
+// Cargar desde localStorage
+function cargarDesdeLocalStorage() {
+    const data = localStorage.getItem("productos");
+
+    if (data) {
+        productos = JSON.parse(data);
+        idCounter = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
+        console.log("Productos cargados desde localStorage:");
+        console.table(productos);
+    } else {
+        console.log("No hay datos previos en localStorage.");
+    }
+}
+
+
+
 // ---------------- VALIDACIONES ----------------
 function validarProducto(nombre, precio) {
     const errores = [];
@@ -40,6 +64,8 @@ function agregarProducto(nombre, precio) {
 
     productos.push(nuevo);
     console.log(' Producto agregado:', nuevo);
+
+    guardarEnLocalStorage();
 }
 
 function listarProductos() {
@@ -70,6 +96,9 @@ function editarProducto(id, nuevoNombre, nuevoPrecio) {
     producto.precio = Number(nuevoPrecio);
 
     console.log(' Producto actualizado:', producto);
+
+
+    guardarEnLocalStorage();
 }
 
 function eliminarProducto(id) {
@@ -81,6 +110,8 @@ function eliminarProducto(id) {
 
     const eliminado = productos.splice(index, 1)[0];
     console.log(' Producto eliminado:', eliminado);
+
+    guardarEnLocalStorage();
 }
 
 // ---------------- FILTROS Y B�SQUEDAS ----------------
@@ -138,6 +169,7 @@ function buscarPorNombreParcial(texto) {
     return filtrarPorNombre(texto);
 }
 
+cargarDesdeLocalStorage();
 // ---------------- AYUDA ----------------
 console.log('Funciones disponibles:');
 console.log('- agregarProducto("Nombre", Precio)');
